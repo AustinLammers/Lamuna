@@ -1,0 +1,39 @@
+package com.lamuna.Lamuna.entries;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class WorkoutEntryFactoryTest {
+
+    @Test
+    public void createRepsWorkoutEntry() {
+        WorkoutEntryFactory workoutEntryFactory = new WorkoutEntryFactory();
+        WorkoutEntry newRepsWorkout = workoutEntryFactory.createRepWorkoutEntry("Push-Ups", "Evening Pushups", 200, 2, 30);
+
+        assertEquals("Push-Ups", newRepsWorkout.getName());
+        assertEquals("Evening Pushups", newRepsWorkout.getDescription());
+        assertEquals(200, newRepsWorkout.getCalories());
+        assertEquals(2, newRepsWorkout.getSets());
+
+        newRepsWorkout.setMinutes(15);
+
+        assertEquals(-1, newRepsWorkout.getMinutes());
+    }
+
+    @Test
+    public void createTimedWorkoutEntry() {
+        WorkoutEntryFactory workoutEntryFactory = new WorkoutEntryFactory();
+        WorkoutEntry newTimedWorkout = workoutEntryFactory.createTimedWorkoutEntry("Jog", "Morning Jog", 500, 60);
+        assertEquals("Jog", newTimedWorkout.getName());
+        assertEquals("Morning Jog", newTimedWorkout.getDescription());
+        assertEquals(500, newTimedWorkout.getCalories());
+        assertEquals(60, newTimedWorkout.getMinutes());
+
+        newTimedWorkout.setReps(15);
+        newTimedWorkout.setSets(3);
+
+        assertEquals(-1, newTimedWorkout.getReps());
+        assertEquals(-1, newTimedWorkout.getSets());
+    }
+}

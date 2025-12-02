@@ -12,6 +12,9 @@ CREATE TABLE FoodLogs (
     description VARCHAR (200),
     date DATE DEFAULT NOW(),
     calories INT,
+    protein FLOAT,
+    carbs FLOAT,
+    fat FLOAT,
     user_id INT NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES Users (user_id)
 );
@@ -21,7 +24,9 @@ CREATE TABLE ExcersizeLogs (
     name VARCHAR(50) NOT NULL,
     description VARCHAR (200),
     date DATE DEFAULT NOW(),
-    time INT,
+    time INT NULL,
+    sets INT NULL,
+    reps INT NULL,
     calories_burnt INT,
     user_id INT NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES Users (user_id)
