@@ -1,11 +1,14 @@
 package com.lamuna.Lamuna.entries;
 
-public class FoodEntry extends Entry{
+import java.time.LocalDate;
+
+public class FoodEntry extends Entry {
     private double protein;
     private double carbs;
     private double fat;
     public FoodEntry(String name, String description, int calories) {
-        super(name, description,  calories);
+        super(name, description, calories);
+
     }
 
     public void setProtein(double protein) {
