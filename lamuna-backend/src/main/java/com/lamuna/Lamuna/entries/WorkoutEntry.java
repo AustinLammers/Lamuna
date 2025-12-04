@@ -1,6 +1,7 @@
 package com.lamuna.Lamuna.entries;
 
 public class WorkoutEntry extends Entry {
+
     private int minutes;
     private int reps;
     private int sets;
@@ -34,4 +35,6 @@ public class WorkoutEntry extends Entry {
     public void setSets(int sets) {
         this.sets = sets;
     }
+
+
 }

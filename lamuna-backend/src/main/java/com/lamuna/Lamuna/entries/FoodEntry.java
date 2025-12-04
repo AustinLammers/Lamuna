@@ -1,33 +1,19 @@
 package com.lamuna.Lamuna.entries;
 
-public class FoodEntry extends Entry{
-    private double protein;
-    private double carbs;
-    private double fat;
+import java.time.LocalDate;
+
+public class FoodEntry extends FoodEntryComponent {
+
     public FoodEntry(String name, String description, int calories) {
-        super(name, description,  calories);
+        super(name, description, calories);
+
+
     }
 
-    public void setProtein(double protein) {
-        this.protein = protein;
+    public FoodEntry(String name, String description, int calories,  double protein, double carbs, double fat) {
+        super(name, description, calories, protein, carbs, fat);
+
     }
 
-    public double getProtein() {
-        return protein;
-    }
 
-    public void setCarbs(double carbs) {
-        this.carbs = carbs;
-    }
-    public double getCarbs() {
-        return carbs;
-    }
-
-    public void setFat(double fat) {
-        this.fat = fat;
-    }
-
-    public double getFat() {
-        return fat;
-    }
 }
