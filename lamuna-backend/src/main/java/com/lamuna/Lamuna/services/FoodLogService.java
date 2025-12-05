@@ -30,13 +30,10 @@ public class FoodLogService {
 
         for (FoodLogEntity row : foodRows) {
             Long parentId = row.getParentLogId();
+
             if (parentId != null) {
-                List<FoodLogEntity> kids = childrenByParent.get(parentId);
-                if (kids == null) {
-                    kids = new ArrayList<>();
-                    childrenByParent.put(parentId, kids);
-                }
-                kids.add(row);
+                List<FoodLogEntity> children = childrenByParent.computeIfAbsent(parentId, k -> new ArrayList<>());
+                children.add(row);
             }
         }
 
@@ -79,27 +76,28 @@ public class FoodLogService {
         return newResponseRow;
     }
 
-    private FoodEntryComponent buildComposite(FoodLogEntity root, Map<Long, List<FoodLogEntity>> childrenByParent) {
-        List<FoodLogEntity> kids = childrenByParent.get(root.getId());
-        if (kids == null || kids.isEmpty()) {
+    private FoodEntryComponent buildComposite(FoodLogEntity currentRow, Map<Long, List<FoodLogEntity>> childrenByParent) {
+        List<FoodLogEntity> children = childrenByParent.get(currentRow.getId());
+
+        if (children == null || children.isEmpty()) {
             return foodEntryFactory.createFoodItem(
-                    root.getName(),
-                    root.getDescription(),
-                    safeInt(root.getCalories()),
-                    safeDouble(root.getProtein()),
-                    safeDouble(root.getCarbs()),
-                    safeDouble(root.getFat()));
+                    currentRow.getName(),
+                    currentRow.getDescription(),
+                    safeInt(currentRow.getCalories()),
+                    safeDouble(currentRow.getProtein()),
+                    safeDouble(currentRow.getCarbs()),
+                    safeDouble(currentRow.getFat()));
         }
 
         FoodEntryComponent meal = foodEntryFactory.createMealItem(
-                root.getName(),
-                root.getDescription(),
-                safeInt(root.getCalories()),
-                safeDouble(root.getProtein()),
-                safeDouble(root.getCarbs()),
-                safeDouble(root.getFat()));
+                currentRow.getName(),
+                currentRow.getDescription(),
+                safeInt(currentRow.getCalories()),
+                safeDouble(currentRow.getProtein()),
+                safeDouble(currentRow.getCarbs()),
+                safeDouble(currentRow.getFat()));
 
-        for (FoodLogEntity child : kids) {
+        for (FoodLogEntity child : children) {
             meal.add(buildComposite(child, childrenByParent));
         }
 
