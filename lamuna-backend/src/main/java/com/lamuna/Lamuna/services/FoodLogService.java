@@ -17,11 +17,12 @@ import java.util.Set;
 @Service
 public class FoodLogService {
     private final FoodLogRepository foodLogRepository;
-    private final FoodEntryFactory foodEntryFactory = new FoodEntryFactory();
+    private final FoodEntryFactory foodEntryFactory;
     private static final Set<String> MEAL_NAMES = Set.of("Breakfast", "Lunch", "Dinner", "Snack");
 
-    FoodLogService(FoodLogRepository foodLogRepository) {
+    FoodLogService(FoodLogRepository foodLogRepository, FoodEntryFactory foodEntryFactory) {
         this.foodLogRepository = foodLogRepository;
+        this.foodEntryFactory = foodEntryFactory;
     }
 
     public List<FoodLogResponse> getAllFoodRows() {

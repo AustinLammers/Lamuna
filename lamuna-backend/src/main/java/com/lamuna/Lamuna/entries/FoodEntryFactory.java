@@ -1,5 +1,8 @@
 package com.lamuna.Lamuna.entries;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class FoodEntryFactory {
 
     public FoodEntryComponent createFoodItem (String name, String description, int calories, double protein, double carbs, double fat) {
