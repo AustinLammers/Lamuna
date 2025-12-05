@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:18
+    container_name: lamuna-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: lamuna
+      POSTGRES_USER: lamuna
+      POSTGRES_PASSWORD: lamuna
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql
+      - ./database/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+
+  backend:
+    build: ./lamuna-backend
+    container_name: lamuna-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/lamuna
+      SPRING_DATASOURCE_USERNAME: lamuna
+      SPRING_DATASOURCE_PASSWORD: lamuna
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  dbdata:
