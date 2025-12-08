@@ -1,6 +1,7 @@
 package com.lamuna.Lamuna.entries;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class FoodEntryComposite extends FoodEntryComponent {
@@ -79,4 +80,43 @@ public class FoodEntryComposite extends FoodEntryComponent {
     }
 
 
+    @Override
+    public Iterator<FoodEntryComponent> iterator() {
+        return new FoodCompositeIterator();
+    }
+
+    private class FoodCompositeIterator extends FoodIterator {
+
+        int cursor = 0;
+        Iterator<FoodEntryComponent> currentIterator;
+        FoodCompositeIterator() {};
+        @Override
+        public boolean hasNext() {
+            if (currentIterator == null || !currentIterator.hasNext()) {
+                if (cursor == children.size()) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        @Override
+        public FoodEntryComponent next() {
+
+            if(currentIterator == null || !currentIterator.hasNext()) {
+                if (cursor < children.size()) {
+                    Iterator<FoodEntryComponent> foodEntryIterator = children.get(cursor++).iterator();
+                    if (foodEntryIterator.hasNext()) {
+                        currentIterator = foodEntryIterator;
+                        return currentIterator.next();
+                    } else {
+                        return null;
+                    }
+                }
+            }
+
+            return currentIterator.next();
+        }
+    }
 }

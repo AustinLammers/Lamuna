@@ -1,6 +1,7 @@
 package com.lamuna.Lamuna.entries;
 
 import java.time.LocalDate;
+import java.util.Iterator;
 
 public class FoodEntry extends FoodEntryComponent {
 
@@ -14,6 +15,4 @@ public class FoodEntry extends FoodEntryComponent {
         super(name, description, calories, protein, carbs, fat);
 
     }
-
-
 }
