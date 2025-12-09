@@ -1,6 +1,6 @@
 package com.lamuna.Lamuna.entities;
 
-import com.lamuna.Lamuna.entries.WorkoutType;
+import com.lamuna.Lamuna.entries.workout.WorkoutType;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;

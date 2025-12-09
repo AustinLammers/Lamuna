@@ -2,8 +2,7 @@ package com.lamuna.Lamuna.services;
 
 import com.lamuna.Lamuna.dto.CreateFoodLogRequest;
 import com.lamuna.Lamuna.dto.FoodLogResponse;
-import com.lamuna.Lamuna.entries.FoodEntryComponent;
-import com.lamuna.Lamuna.entries.FoodEntryFactory;
+import com.lamuna.Lamuna.entries.food.FoodEntryComponent;
 import com.lamuna.Lamuna.entities.FoodLogEntity;
 import com.lamuna.Lamuna.repositories.FoodLogRepository;
 import org.springframework.stereotype.Service;
@@ -17,12 +16,10 @@ import java.util.Set;
 @Service
 public class FoodLogService {
     private final FoodLogRepository foodLogRepository;
-    private final FoodEntryFactory foodEntryFactory;
     private static final Set<String> MEAL_NAMES = Set.of("Breakfast", "Lunch", "Dinner", "Snack", "Compound Ingredient");
 
-    FoodLogService(FoodLogRepository foodLogRepository, FoodEntryFactory foodEntryFactory) {
+    FoodLogService(FoodLogRepository foodLogRepository) {
         this.foodLogRepository = foodLogRepository;
-        this.foodEntryFactory = foodEntryFactory;
     }
 
     public List<FoodLogResponse> getAllFoodRows() {
@@ -107,40 +104,45 @@ public class FoodLogService {
         List<FoodLogEntity> children = childrenByParent.get(currentRow.getId());
 
         if (children == null || children.isEmpty()) {
-            return foodEntryFactory.createFoodItem(
-                    currentRow.getName(),
-                    currentRow.getDescription(),
-                    safeInt(currentRow.getCalories()),
-                    safeDouble(currentRow.getProtein()),
-                    safeDouble(currentRow.getCarbs()),
-                    safeDouble(currentRow.getFat()));
+            return FoodEntryComponent.getBuilder()
+                    .createAsIngredientItem()
+                    .name(currentRow.getName())
+                    .description(currentRow.getDescription())
+                    .calories(safeInt(currentRow.getCalories()))
+                    .protein(safeDouble(currentRow.getProtein()))
+                    .carbs(safeDouble(currentRow.getCarbs()))
+                    .fat(safeDouble(currentRow.getFat()))
+                    .build();
+
         }
 
-        FoodEntryComponent meal = foodEntryFactory.createMealItem(
-                currentRow.getName(),
-                currentRow.getDescription(),
-                safeInt(currentRow.getCalories()),
-                safeDouble(currentRow.getProtein()),
-                safeDouble(currentRow.getCarbs()),
-                safeDouble(currentRow.getFat()));
+        FoodEntryComponent.FoodEntryComponentBuilder builder = FoodEntryComponent.getBuilder()
+                .createAsMealItem()
+                .name(currentRow.getName())
+                .description(currentRow.getDescription())
+                .calories(safeInt(currentRow.getCalories()))
+                .protein(safeDouble(currentRow.getProtein()))
+                .carbs(safeDouble(currentRow.getCarbs()))
+                .fat(safeDouble(currentRow.getFat()));
+
 
         for (FoodLogEntity child : children) {
-            meal.add(buildComposite(child, childrenByParent));
+            builder.addIngredient(buildComposite(child, childrenByParent));
         }
 
-        return meal;
+        return builder.build();
     }
 
     private FoodEntryComponent buildBasic(FoodLogEntity currentRow) {
-
-
-            return foodEntryFactory.createFoodItem(
-                    currentRow.getName(),
-                    currentRow.getDescription(),
-                    safeInt(currentRow.getCalories()),
-                    safeDouble(currentRow.getProtein()),
-                    safeDouble(currentRow.getCarbs()),
-                    safeDouble(currentRow.getFat()));
+        return FoodEntryComponent.getBuilder()
+                .createAsIngredientItem()
+                .name(currentRow.getName())
+                .description(currentRow.getDescription())
+                .calories(safeInt(currentRow.getCalories()))
+                .protein(safeDouble(currentRow.getProtein()))
+                .carbs(safeDouble(currentRow.getCarbs()))
+                .fat(safeDouble(currentRow.getFat()))
+                .build();
     }
 
     private FoodLogResponse toAggregatedResponse(FoodLogEntity foodRow, FoodEntryComponent composite) {

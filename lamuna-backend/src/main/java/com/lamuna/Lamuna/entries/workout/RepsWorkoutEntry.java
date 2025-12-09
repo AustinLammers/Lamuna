@@ -1,4 +1,4 @@
-package com.lamuna.Lamuna.entries;
+package com.lamuna.Lamuna.entries.workout;
 
 public class RepsWorkoutEntry extends WorkoutEntryDecorator {
 

@@ -1,7 +1,4 @@
-package com.lamuna.Lamuna.entries;
-
-import java.time.LocalDate;
-import java.util.Iterator;
+package com.lamuna.Lamuna.entries.food;
 
 public class FoodEntry extends FoodEntryComponent {
 
