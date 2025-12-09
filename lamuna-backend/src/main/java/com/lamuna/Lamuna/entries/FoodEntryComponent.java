@@ -65,7 +65,6 @@ public abstract class FoodEntryComponent extends Entry implements Iterable<FoodE
     class FoodIterator implements Iterator<FoodEntryComponent> {
 
         boolean hasBeenRead = false;
-        Iterator<FoodEntryComponent> currentIterator;
         FoodIterator() {};
         @Override
         public boolean hasNext() {
