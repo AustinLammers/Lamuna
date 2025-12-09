@@ -18,7 +18,7 @@ import java.util.Set;
 public class FoodLogService {
     private final FoodLogRepository foodLogRepository;
     private final FoodEntryFactory foodEntryFactory;
-    private static final Set<String> MEAL_NAMES = Set.of("Breakfast", "Lunch", "Dinner", "Snack");
+    private static final Set<String> MEAL_NAMES = Set.of("Breakfast", "Lunch", "Dinner", "Snack", "Compound Ingredient");
 
     FoodLogService(FoodLogRepository foodLogRepository, FoodEntryFactory foodEntryFactory) {
         this.foodLogRepository = foodLogRepository;
@@ -40,11 +40,37 @@ public class FoodLogService {
 
         List<FoodLogResponse> responses = new ArrayList<>();
         for (FoodLogEntity row : foodRows) {
-            if (row.getParentLogId() == null) {
+            if (row.getParentLogId() != null) {
                 FoodEntryComponent composite = buildComposite(row, childrenByParent);
                 responses.add(toAggregatedResponse(row, composite));
             } else {
                 responses.add(toBasicResponse(row));
+            }
+        }
+
+        return responses;
+    }
+
+    public List<FoodEntryComponent> getAllFoods() {
+        List<FoodLogEntity> foodRows = foodLogRepository.findAll();
+        Map<Long, List<FoodLogEntity>> childrenByParent = new HashMap<>();
+
+        for (FoodLogEntity row : foodRows) {
+            Long parentId = row.getParentLogId();
+
+            if (parentId != null) {
+                List<FoodLogEntity> children = childrenByParent.computeIfAbsent(parentId, k -> new ArrayList<>());
+                children.add(row);
+            }
+        }
+
+        List<FoodEntryComponent> responses = new ArrayList<>();
+        for (FoodLogEntity row : foodRows) {
+            if (row.getParentLogId() != null) {
+                FoodEntryComponent composite = buildComposite(row, childrenByParent);
+                responses.add(composite);
+            } else {
+                responses.add(buildBasic(row));
             }
         }
 
@@ -105,6 +131,18 @@ public class FoodLogService {
         return meal;
     }
 
+    private FoodEntryComponent buildBasic(FoodLogEntity currentRow) {
+
+
+            return foodEntryFactory.createFoodItem(
+                    currentRow.getName(),
+                    currentRow.getDescription(),
+                    safeInt(currentRow.getCalories()),
+                    safeDouble(currentRow.getProtein()),
+                    safeDouble(currentRow.getCarbs()),
+                    safeDouble(currentRow.getFat()));
+    }
+
     private FoodLogResponse toAggregatedResponse(FoodLogEntity foodRow, FoodEntryComponent composite) {
         FoodLogResponse response = new FoodLogResponse();
         response.setId(foodRow.getId());
@@ -114,7 +152,7 @@ public class FoodLogService {
         response.setUserId(foodRow.getUserId());
         response.setParentLogId(foodRow.getParentLogId());
 
-        if (MEAL_NAMES.contains(foodRow.getName())) {
+        if (composite.hasChildren()) {
             response.setCalories((int) composite.getCalories());
             response.setProtein(composite.getProtein());
             response.setCarbs(composite.getCarbs());

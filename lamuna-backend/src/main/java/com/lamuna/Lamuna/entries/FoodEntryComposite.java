@@ -79,6 +79,10 @@ public class FoodEntryComposite extends FoodEntryComponent {
         children.remove(entry);
     }
 
+    @Override
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
 
     @Override
     public Iterator<FoodEntryComponent> iterator() {
