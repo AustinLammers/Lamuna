@@ -23,7 +23,7 @@ public class WorkoutLogController {
     }
 
     @PostMapping
-    public WorkoutLogResponse createFoodRow(@RequestBody CreateWorkoutLogRequest foodRequest) {
+    public WorkoutLogResponse createWorkoutRow(@RequestBody CreateWorkoutLogRequest foodRequest) {
         return workoutLogService.create(foodRequest);
     }
 

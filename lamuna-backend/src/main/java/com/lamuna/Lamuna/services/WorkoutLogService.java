@@ -65,6 +65,7 @@ public class WorkoutLogService {
         newResponseRow.setMinutes(workoutRow.getMinutes());
         newResponseRow.setReps(workoutRow.getReps());
         newResponseRow.setSets(workoutRow.getSets());
+        newResponseRow.setType(workoutRow.getType());
 
         return newResponseRow;
     }
