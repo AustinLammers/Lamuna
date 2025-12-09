@@ -3,9 +3,8 @@ package com.lamuna.Lamuna.services;
 import com.lamuna.Lamuna.dto.CreateWorkoutLogRequest;
 import com.lamuna.Lamuna.dto.WorkoutLogResponse;
 import com.lamuna.Lamuna.entities.WorkoutLogEntity;
-import com.lamuna.Lamuna.entries.WorkoutEntry;
-import com.lamuna.Lamuna.entries.WorkoutEntryFactory;
-import com.lamuna.Lamuna.entries.WorkoutType;
+import com.lamuna.Lamuna.entries.workout.WorkoutEntry;
+import com.lamuna.Lamuna.entries.workout.WorkoutEntryFactory;
 import com.lamuna.Lamuna.repositories.WorkoutLogRepository;
 import org.springframework.stereotype.Service;
 

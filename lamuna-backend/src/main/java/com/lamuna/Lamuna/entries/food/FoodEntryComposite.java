@@ -1,4 +1,4 @@
-package com.lamuna.Lamuna.entries;
+package com.lamuna.Lamuna.entries.food;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -70,12 +70,12 @@ public class FoodEntryComposite extends FoodEntryComponent {
     }
 
     @Override
-    public void add (FoodEntryComponent entry) {
+    protected void add (FoodEntryComponent entry) {
         children.add(entry);
     }
 
     @Override
-    public void remove(FoodEntryComponent entry) {
+    protected void remove(FoodEntryComponent entry) {
         children.remove(entry);
     }
 

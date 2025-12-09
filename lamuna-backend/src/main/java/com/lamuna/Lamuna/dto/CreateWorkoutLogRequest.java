@@ -1,6 +1,6 @@
 package com.lamuna.Lamuna.dto;
 
-import com.lamuna.Lamuna.entries.WorkoutType;
+import com.lamuna.Lamuna.entries.workout.WorkoutType;
 
 import java.time.LocalDate;
 

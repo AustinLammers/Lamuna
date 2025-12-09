@@ -1,6 +1,5 @@
-package com.lamuna.Lamuna.entries;
+package com.lamuna.Lamuna.entries.workout;
 
-import org.hibernate.jdbc.Work;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,7 +19,7 @@ public class WorkoutEntryFactory {
         return entry;
     }
 
-    public WorkoutEntry createWorkoutEntry(WorkoutType type ,String name, String description, int calories, int sets, int repsPerSet, int minutes) {
+    public WorkoutEntry createWorkoutEntry(WorkoutType type , String name, String description, int calories, int sets, int repsPerSet, int minutes) {
 
         if(type == WorkoutType.REPS) {
             return createRepWorkoutEntry(name, description, calories, sets, repsPerSet);

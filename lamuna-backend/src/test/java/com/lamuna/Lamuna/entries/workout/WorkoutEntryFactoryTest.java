@@ -1,4 +1,4 @@
-package com.lamuna.Lamuna.entries;
+package com.lamuna.Lamuna.entries.workout;
 
 import org.junit.jupiter.api.Test;
 

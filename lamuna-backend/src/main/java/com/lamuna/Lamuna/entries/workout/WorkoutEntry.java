@@ -1,4 +1,6 @@
-package com.lamuna.Lamuna.entries;
+package com.lamuna.Lamuna.entries.workout;
+
+import com.lamuna.Lamuna.entries.Entry;
 
 public class WorkoutEntry extends Entry {
 
