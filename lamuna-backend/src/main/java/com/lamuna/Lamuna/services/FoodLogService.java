@@ -7,7 +7,9 @@ import com.lamuna.Lamuna.entities.FoodLogEntity;
 import com.lamuna.Lamuna.repositories.FoodLogRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,56 +25,39 @@ public class FoodLogService {
     }
 
     public List<FoodLogResponse> getAllFoodRows() {
-        List<FoodLogEntity> foodRows = foodLogRepository.findAll();
-        Map<Long, List<FoodLogEntity>> childrenByParent = new HashMap<>();
+        return getAllFoodRows(null);
+    }
 
-        for (FoodLogEntity row : foodRows) {
-            Long parentId = row.getParentLogId();
-
-            if (parentId != null) {
-                List<FoodLogEntity> children = childrenByParent.computeIfAbsent(parentId, k -> new ArrayList<>());
-                children.add(row);
-            }
-        }
+    public List<FoodLogResponse> getAllFoodRows(LocalDate date) {
+        List<FoodLogEntity> foodRows = (date == null)
+                ? foodLogRepository.findAll()
+                : foodLogRepository.findAllByDate(date);
+        Map<Long, List<FoodLogEntity>> childrenByParent = groupChildren(foodRows);
 
         List<FoodLogResponse> responses = new ArrayList<>();
         for (FoodLogEntity row : foodRows) {
-            if (row.getParentLogId() != null) {
+            if (row.getParentLogId() == null) {
                 FoodEntryComponent composite = buildComposite(row, childrenByParent);
                 responses.add(toAggregatedResponse(row, composite));
-            } else {
-                responses.add(toBasicResponse(row));
             }
         }
 
         return responses;
     }
 
-    public List<FoodEntryComponent> getAllFoods() {
-        List<FoodLogEntity> foodRows = foodLogRepository.findAll();
-        Map<Long, List<FoodLogEntity>> childrenByParent = new HashMap<>();
-
-        for (FoodLogEntity row : foodRows) {
-            Long parentId = row.getParentLogId();
-
-            if (parentId != null) {
-                List<FoodLogEntity> children = childrenByParent.computeIfAbsent(parentId, k -> new ArrayList<>());
-                children.add(row);
-            }
-        }
-
-        List<FoodEntryComponent> responses = new ArrayList<>();
-        for (FoodLogEntity row : foodRows) {
-            if (row.getParentLogId() != null) {
-                FoodEntryComponent composite = buildComposite(row, childrenByParent);
-                responses.add(composite);
-            } else {
-                responses.add(buildBasic(row));
-            }
-        }
-
-        return responses;
-    }
+//    public List<FoodEntryComponent> getAllFoods() {
+//        List<FoodLogEntity> foodRows = foodLogRepository.findAll();
+//        Map<Long, List<FoodLogEntity>> childrenByParent = groupChildren(foodRows);
+//
+//        List<FoodEntryComponent> responses = new ArrayList<>();
+//        for (FoodLogEntity row : foodRows) {
+//            if (row.getParentLogId() == null) {
+//                responses.add(buildComposite(row, childrenByParent));
+//            }
+//        }
+//
+//        return responses;
+//    }
 
     public FoodLogResponse create(CreateFoodLogRequest requestToCreateRow) {
         return toBasicResponse(setRequestFields(requestToCreateRow));
@@ -112,6 +97,7 @@ public class FoodLogService {
                     .protein(safeDouble(currentRow.getProtein()))
                     .carbs(safeDouble(currentRow.getCarbs()))
                     .fat(safeDouble(currentRow.getFat()))
+                    .id(currentRow.getId())
                     .build();
 
         }
@@ -123,7 +109,8 @@ public class FoodLogService {
                 .calories(safeInt(currentRow.getCalories()))
                 .protein(safeDouble(currentRow.getProtein()))
                 .carbs(safeDouble(currentRow.getCarbs()))
-                .fat(safeDouble(currentRow.getFat()));
+                .fat(safeDouble(currentRow.getFat()))
+                .id(currentRow.getId());
 
 
         for (FoodLogEntity child : children) {
@@ -153,18 +140,11 @@ public class FoodLogService {
         response.setDate(foodRow.getDate());
         response.setUserId(foodRow.getUserId());
         response.setParentLogId(foodRow.getParentLogId());
-
-        if (composite.hasChildren()) {
-            response.setCalories((int) composite.getCalories());
-            response.setProtein(composite.getProtein());
-            response.setCarbs(composite.getCarbs());
-            response.setFat(composite.getFat());
-        } else {
-            response.setCalories(foodRow.getCalories());
-            response.setProtein(foodRow.getProtein());
-            response.setCarbs(foodRow.getCarbs());
-            response.setFat(foodRow.getFat());
-        }
+        response.setCalories((int) composite.getCalories());
+        response.setProtein(composite.getProtein());
+        response.setCarbs(composite.getCarbs());
+        response.setFat(composite.getFat());
+        response.setIngredients(flattenIngredients(composite));
 
         return response;
     }
@@ -197,5 +177,46 @@ public class FoodLogService {
             return 0.0;
         }
         return value;
+    }
+
+    private Map<Long, List<FoodLogEntity>> groupChildren(List<FoodLogEntity> foodRows) {
+        Map<Long, List<FoodLogEntity>> childrenByParent = new HashMap<>();
+
+        for (FoodLogEntity row : foodRows) {
+            Long parentId = row.getParentLogId();
+
+            if (parentId != null) {
+                List<FoodLogEntity> children = childrenByParent.computeIfAbsent(parentId, k -> new ArrayList<>());
+                children.add(row);
+            }
+        }
+
+        return childrenByParent;
+    }
+
+    private List<FoodLogResponse.IngredientBreakdown> flattenIngredients(FoodEntryComponent composite) {
+        List<FoodLogResponse.IngredientBreakdown> ingredients = new ArrayList<>();
+        ingredients.add(toBreakdown(composite));
+
+        for (FoodEntryComponent entry : composite) {
+            if (entry == composite) {
+                continue;
+            }
+            ingredients.add(toBreakdown(entry));
+        }
+
+        return ingredients;
+    }
+
+    private FoodLogResponse.IngredientBreakdown toBreakdown(FoodEntryComponent entry) {
+        FoodLogResponse.IngredientBreakdown breakdown = new FoodLogResponse.IngredientBreakdown();
+        breakdown.setId(entry.getId());
+        breakdown.setName(entry.getName());
+        breakdown.setDescription(entry.getDescription());
+        breakdown.setCalories(entry.getCalories());
+        breakdown.setProtein(entry.getProtein());
+        breakdown.setCarbs(entry.getCarbs());
+        breakdown.setFat(entry.getFat());
+        return breakdown;
     }
 }

@@ -12,7 +12,7 @@ public class FoodEntryComposite extends FoodEntryComponent {
 
     }
 
-    public FoodEntryComposite(String name, String description, int calories, double protein, double carbs, double fat) {
+    public FoodEntryComposite(Long id, String name, String description, int calories, double protein, double carbs, double fat) {
         super(name, description, calories, protein, carbs, fat);
 
     }

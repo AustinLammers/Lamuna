@@ -3,8 +3,10 @@ package com.lamuna.Lamuna.controllers;
 import com.lamuna.Lamuna.dto.CreateFoodLogRequest;
 import com.lamuna.Lamuna.dto.FoodLogResponse;
 import com.lamuna.Lamuna.services.FoodLogService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -18,8 +20,10 @@ public class FoodLogController {
     }
 
     @GetMapping
-    public List<FoodLogResponse> getAllFoodRows() {
-        return foodLogService.getAllFoodRows();
+    public List<FoodLogResponse> getAllFoodRows(
+            @RequestParam(value = "date", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return foodLogService.getAllFoodRows(date);
     }
 
     @PostMapping
