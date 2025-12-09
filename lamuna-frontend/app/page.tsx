@@ -103,7 +103,7 @@ const Home = () => {
       acc.calories += item.calories || 0;
       acc.minutes += item.minutes || 0;
       acc.sets += item.sets || 0;
-      acc.reps += item.reps || 0;
+      acc.reps += (item.reps || 0) * (item.sets || 0);
       return acc;
     },
     { count: 0, calories: 0, minutes: 0, sets: 0, reps: 0 },
