@@ -1,6 +1,8 @@
 package com.lamuna.Lamuna.entries;
 
-public abstract class FoodEntryComponent extends Entry {
+import java.util.Iterator;
+
+public abstract class FoodEntryComponent extends Entry implements Iterable<FoodEntryComponent> {
     private double protein;
     private double carbs;
     private double fat;
@@ -51,8 +53,29 @@ public abstract class FoodEntryComponent extends Entry {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void remove(FoodEntryComponent workoutEntryComponent){
+    public void remove(FoodEntryComponent workoutEntryComponent) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Iterator<FoodEntryComponent> iterator() {
+        return new FoodIterator();
+    }
+
+    class FoodIterator implements Iterator<FoodEntryComponent> {
+
+        boolean hasBeenRead = false;
+        FoodIterator() {};
+        @Override
+        public boolean hasNext() {
+            return !hasBeenRead;
+        }
+
+        @Override
+        public FoodEntryComponent next() {
+            hasBeenRead = true;
+            return FoodEntryComponent.this;
+        }
     }
 
 }
