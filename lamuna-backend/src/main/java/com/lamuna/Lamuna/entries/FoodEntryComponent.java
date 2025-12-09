@@ -62,6 +62,10 @@ public abstract class FoodEntryComponent extends Entry implements Iterable<FoodE
         return new FoodIterator();
     }
 
+    public boolean hasChildren() {
+        return false;
+    }
+
     class FoodIterator implements Iterator<FoodEntryComponent> {
 
         boolean hasBeenRead = false;

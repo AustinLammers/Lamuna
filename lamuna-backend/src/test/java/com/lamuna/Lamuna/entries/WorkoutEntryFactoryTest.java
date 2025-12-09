@@ -9,7 +9,7 @@ public class WorkoutEntryFactoryTest {
     @Test
     public void createRepsWorkoutEntry() {
         WorkoutEntryFactory workoutEntryFactory = new WorkoutEntryFactory();
-        WorkoutEntry newRepsWorkout = workoutEntryFactory.createRepWorkoutEntry("Push-Ups", "Evening Pushups", 200, 2, 30);
+        WorkoutEntry newRepsWorkout = workoutEntryFactory.createWorkoutEntry(WorkoutType.REPS,"Push-Ups", "Evening Pushups", 200, 2, 30, 0);
 
         assertEquals("Push-Ups", newRepsWorkout.getName());
         assertEquals("Evening Pushups", newRepsWorkout.getDescription());
@@ -24,7 +24,7 @@ public class WorkoutEntryFactoryTest {
     @Test
     public void createTimedWorkoutEntry() {
         WorkoutEntryFactory workoutEntryFactory = new WorkoutEntryFactory();
-        WorkoutEntry newTimedWorkout = workoutEntryFactory.createTimedWorkoutEntry("Jog", "Morning Jog", 500, 60);
+        WorkoutEntry newTimedWorkout = workoutEntryFactory.createWorkoutEntry(WorkoutType.TIMED,"Jog", "Morning Jog", 500, 0, 0, 60);
         assertEquals("Jog", newTimedWorkout.getName());
         assertEquals("Morning Jog", newTimedWorkout.getDescription());
         assertEquals(500, newTimedWorkout.getCalories());
