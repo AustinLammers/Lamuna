@@ -7,6 +7,6 @@ public class FoodEntry extends FoodEntryComponent {
     }
 
     public FoodEntry(Long id, String name, String description, int calories,  double protein, double carbs, double fat) {
-        super(name, description, calories, protein, carbs, fat);
+        super(id, name, description, calories, protein, carbs, fat);
     }
 }

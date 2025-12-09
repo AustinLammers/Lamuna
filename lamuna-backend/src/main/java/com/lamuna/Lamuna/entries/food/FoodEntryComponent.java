@@ -19,11 +19,12 @@ public abstract class FoodEntryComponent extends Entry implements Iterable<FoodE
         fat = 0;
     }
 
-    FoodEntryComponent(String name, String description, int calories, double protein, double carbs, double fat) {
+    FoodEntryComponent(Long id, String name, String description, int calories, double protein, double carbs, double fat) {
         super(name, description, calories);
         this.protein = protein;
         this.carbs = carbs;
         this.fat = fat;
+        this.id = id;
     }
 
     public void setId(Long id) {
