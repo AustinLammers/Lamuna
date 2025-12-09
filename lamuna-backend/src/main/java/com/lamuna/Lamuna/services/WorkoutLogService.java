@@ -8,13 +8,14 @@ import com.lamuna.Lamuna.entries.workout.WorkoutEntryFactory;
 import com.lamuna.Lamuna.repositories.WorkoutLogRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class WorkoutLogService {
     private final WorkoutLogRepository workoutLogRepository;
     private final WorkoutEntryFactory workoutEntryFactory;
-    private static final Set<String> MEAL_NAMES = Set.of("Breakfast", "Lunch", "Dinner", "Snack", "Compound Ingredient");
 
     WorkoutLogService(WorkoutLogRepository workoutLogRepository, WorkoutEntryFactory workoutEntryFactory) {
         this.workoutLogRepository = workoutLogRepository;
@@ -22,11 +23,26 @@ public class WorkoutLogService {
     }
 
     public List<WorkoutLogResponse> getAllWorkoutRows() {
-        List<WorkoutLogEntity> workoutRows = workoutLogRepository.findAll();
+        return getAllWorkoutRows(null);
+    }
+
+    public List<WorkoutLogResponse> getAllWorkoutRows(LocalDate date) {
+        List<WorkoutLogEntity> workoutRows = (date == null)
+                ? workoutLogRepository.findAll()
+                : workoutLogRepository.findAllByDate(date);
 
         List<WorkoutLogResponse> responses = new ArrayList<>();
         for (WorkoutLogEntity entity: workoutRows) {
-            responses.add(toBasicResponse(entity));
+            WorkoutEntry entry = workoutEntryFactory.createWorkoutEntry(
+                    entity.getType(),
+                    entity.getName(),
+                    entity.getDescription(),
+                    entity.getCalories() == null ? 0 : entity.getCalories(),
+                    entity.getSets() == null ? 0 : entity.getSets(),
+                    entity.getReps() == null ? 0 : entity.getReps(),
+                    entity.getMinutes() == null ? 0 : entity.getMinutes()
+            );
+            responses.add(toBasicResponse(entity, entry));
         }
 
         return responses;
@@ -53,6 +69,19 @@ public class WorkoutLogService {
 
     // Helpers
     private WorkoutLogResponse toBasicResponse(WorkoutLogEntity workoutRow) {
+        WorkoutEntry entry = workoutEntryFactory.createWorkoutEntry(
+                workoutRow.getType(),
+                workoutRow.getName(),
+                workoutRow.getDescription(),
+                workoutRow.getCalories() == null ? 0 : workoutRow.getCalories(),
+                workoutRow.getSets() == null ? 0 : workoutRow.getSets(),
+                workoutRow.getReps() == null ? 0 : workoutRow.getReps(),
+                workoutRow.getMinutes() == null ? 0 : workoutRow.getMinutes()
+        );
+        return toBasicResponse(workoutRow, entry);
+    }
+
+    private WorkoutLogResponse toBasicResponse(WorkoutLogEntity workoutRow, WorkoutEntry entry) {
         WorkoutLogResponse newResponseRow = new WorkoutLogResponse();
 
         newResponseRow.setId(workoutRow.getId());
@@ -60,10 +89,10 @@ public class WorkoutLogService {
         newResponseRow.setDescription(workoutRow.getDescription());
         newResponseRow.setDate(workoutRow.getDate());
         newResponseRow.setUserId(workoutRow.getUserId());
-        newResponseRow.setCalories(workoutRow.getCalories());
-        newResponseRow.setMinutes(workoutRow.getMinutes());
-        newResponseRow.setReps(workoutRow.getReps());
-        newResponseRow.setSets(workoutRow.getSets());
+        newResponseRow.setCalories(entry.getCalories());
+        newResponseRow.setMinutes(entry.getMinutes());
+        newResponseRow.setReps(entry.getReps());
+        newResponseRow.setSets(entry.getSets());
         newResponseRow.setType(workoutRow.getType());
 
         return newResponseRow;

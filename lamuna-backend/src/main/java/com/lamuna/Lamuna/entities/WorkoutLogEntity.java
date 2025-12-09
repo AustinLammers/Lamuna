@@ -21,14 +21,19 @@ public class WorkoutLogEntity {
 
     private LocalDate date;
 
-    private Integer calories;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "workout_type", nullable = false)
+    private WorkoutType type;
+
+    @Column(name = "time")
+    private Integer minutes;
+
     private Integer sets;
 
     private Integer reps;
 
-    private Integer minutes;
-
-    private WorkoutType type;
+    @Column(name = "calories_burnt")
+    private Integer calories;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;

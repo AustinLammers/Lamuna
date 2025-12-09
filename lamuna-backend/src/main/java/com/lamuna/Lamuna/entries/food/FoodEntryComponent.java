@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public abstract class FoodEntryComponent extends Entry implements Iterable<FoodEntryComponent> {
+    private Long id;
     private double protein;
     private double carbs;
     private double fat;
@@ -23,6 +24,14 @@ public abstract class FoodEntryComponent extends Entry implements Iterable<FoodE
         this.protein = protein;
         this.carbs = carbs;
         this.fat = fat;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public void setProtein(double protein) {
@@ -95,6 +104,7 @@ public abstract class FoodEntryComponent extends Entry implements Iterable<FoodE
         private double carbs;
         private double fat;
         private boolean isComposite = false;
+        private Long id;
 
         public FoodEntryComponentBuilder name(String name) {
             this.name = name;
@@ -126,6 +136,11 @@ public abstract class FoodEntryComponent extends Entry implements Iterable<FoodE
             return this;
         }
 
+        public FoodEntryComponentBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
         public FoodEntryComponentBuilder createAsMealItem() {
             isComposite = true;
             return this;
@@ -147,7 +162,7 @@ public abstract class FoodEntryComponent extends Entry implements Iterable<FoodE
                     throw new IllegalStateException("A composite item must have at least one child");
                 }
 
-                FoodEntryComponent component = new FoodEntryComposite(name, description, calories, protein, carbs, fat);
+                FoodEntryComponent component = new FoodEntryComposite(id, name, description, calories, protein, carbs, fat);
                 for (FoodEntryComponent entry : children) {
                     component.add(entry);
                 }
@@ -155,7 +170,7 @@ public abstract class FoodEntryComponent extends Entry implements Iterable<FoodE
                 return component;
             }
             else {
-                return new FoodEntry(name, description, calories, protein, carbs, fat);
+                return new FoodEntry(id, name, description, calories, protein, carbs, fat);
             }
         }
 
