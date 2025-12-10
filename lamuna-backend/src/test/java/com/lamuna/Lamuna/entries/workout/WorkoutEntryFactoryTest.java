@@ -18,7 +18,7 @@ public class WorkoutEntryFactoryTest {
 
         newRepsWorkout.setMinutes(15);
 
-        assertEquals(-1, newRepsWorkout.getMinutes());
+        assertEquals(0, newRepsWorkout.getMinutes());
     }
 
     @Test
@@ -33,7 +33,7 @@ public class WorkoutEntryFactoryTest {
         newTimedWorkout.setReps(15);
         newTimedWorkout.setSets(3);
 
-        assertEquals(-1, newTimedWorkout.getReps());
-        assertEquals(-1, newTimedWorkout.getSets());
+        assertEquals(0, newTimedWorkout.getReps());
+        assertEquals(0, newTimedWorkout.getSets());
     }
 }
